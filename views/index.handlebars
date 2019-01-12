@@ -1,0 +1,131 @@
+ <div class="card">
+  <div class="card-header">
+    <h5 class="card-title">Instructions for using this page:</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-2">
+        <img src = "/assets/img/burger.png" alt="burger">
+        <br>
+        Eat-da-Burger
+      </div>
+
+      <div class="col-10">
+        <p class="card-text">
+          <ul>
+            <li> Please select an example burger below and click "Add Burger"</li>
+            <li>Once "Add Burger" is clicked, the page creates the table below with the automatically generated burger id and burger name selected based on the option chosen</li>
+            <li>Once the "Eat" button is clicked another table displays the history of burgers already eaten based on user's selection</li>
+            <li>The values "Burger 1", "Burger 2" etc. are just examples to demonstrate the full stack application being built</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card text-center">
+  <div class="card-header">
+    <h5 class="card-title">Add a Burger</h5>
+  </div>
+  <div class="card-body">
+    
+    <p class="card-text">Burger Name: (Please scroll all the way to the bottom of this page after clicking "Add Burger" button to see your added burger if the table is full)</p>
+    <form class="create-form">
+    <input type="radio" id = "bu" value = "Burger 1"> Burger1
+    <input type="radio" id = "bu" value = "Burger 2"> Burger2
+    <input type="radio" id = "bu" value = "Burger 3"> Burger3
+    <input type="radio" id = "bu" value = "Burger 4"> Burger4
+    <input type="radio" id = "bu" value = "Burger 5"> Burger5
+    <input type="radio" id = "bu" value = "Burger 6"> Burger6
+    <button type="submit" class="btn btn-primary">Add Burger</button>
+    </form>
+    
+  </div>
+  
+</div>
+
+
+<div class="row">
+  <div class="col-sm-6">
+<div class="card">
+  <div class="card-header">
+    Burgers Added
+  </div>
+  <ul class="list-group list-group-flush">
+    {{#each burgers}}
+    {{#unless eat}}
+    <li class="list-group-item">id: {{this.id}} <br> burger name: {{this.name}}  <button data-burgerid="{{this.id}}" class="delburger">Eat</button></li>
+      {{/unless}}
+  {{/each}}
+  </ul>
+</div>
+</div>
+<div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Following burgers are already eaten</h5>
+        <p class="card-text">
+          <ul>
+            {{#each burgers}}
+           {{#if eat}}
+          <li>id: {{this.id}} <br> burger name: {{this.name}}</li>
+             
+             {{/if}}
+            {{/each}}
+          </ul>
+        </p>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<script type="text/javascript">
+
+
+
+$(".delburger").on("click", function(event) {
+   var id = $(this).data("burgerid");
+   
+    var newEat = 1;
+   
+    var newBurgerState = {
+      eat: newEat
+    };
+
+    
+    $.ajax("/burgers/" + id, {
+      type: "PUT",
+      data: newBurgerState
+    }).then(
+      function() {
+        console.log("Burger updated", id) ;
+        location.reload();
+      }
+    );
+  });
+
+$(".create-form").on("submit", function(event) {
+  alert($("#bu:checked").val().trim()+' successfully added to "Burgers Added" table, please scroll all the way to the bottom of this page to view your entry(if it is not visible in current view)');
+   event.preventDefault();
+    var newBurger = {
+      name: $("#bu:checked").val().trim()
+    };
+
+    
+    $.ajax("/api/burgers", {
+      type: "POST",
+      data: newBurger
+    }).then(
+      function() {
+        console.log("created new burger");
+        location.reload();
+      }
+    );
+  });
+
+</script>
